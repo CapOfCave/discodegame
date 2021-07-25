@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -20,18 +22,18 @@ import java.util.stream.Collectors;
 public class CommandEventListener extends ListenerAdapter {
 
     @NonNull
-    private CommandParser commandParser;
+    private final CommandParser commandParser;
 
     @NonNull
-    private Collection<? extends BotCommand> guildCommands;
+    private final Map<String, BotCommand> guildCommands = new HashMap<>();
 
     @Autowired
     public CommandEventListener(@NonNull CommandParser commandParser, Collection<? extends BotCommand> allCommands) {
         this.commandParser = commandParser;
-        this.guildCommands = allCommands
+        allCommands
                 .stream()
                 .filter(botCommand -> botCommand.getClass().isAnnotationPresent(RegisteredGuildCommand.class))
-                .collect(Collectors.toSet());
+                .forEach(this::addToGuildCommands);
         log.info("CommandEventListener found {} commands, of which {} are guild commands.", allCommands.size(), this.guildCommands.size());
     }
 
@@ -44,12 +46,12 @@ public class CommandEventListener extends ListenerAdapter {
         executeCommand(commandName);
     }
 
+    private void addToGuildCommands(BotCommand botCommand) {
+        this.guildCommands.putIfAbsent(botCommand.getName(), botCommand);
+        botCommand.getAliases().forEach(alias -> this.guildCommands.putIfAbsent(alias, botCommand));
+    }
+
     private void executeCommand(String commandName) {
-        this.guildCommands
-                .stream()
-                .filter(guildCommand -> guildCommand.getName().equals(commandName)
-                        || guildCommand.getAliases().contains(commandName))
-                .collect(StreamUtils.toSingleton())
-                .accept();
+        this.guildCommands.get(commandName).accept();
     }
 }
