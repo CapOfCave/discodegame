@@ -1,4 +1,4 @@
-package me.kecker.discodegame.bot.architecture.commands;
+package me.kecker.discodegame.bot.commands;
 
 import net.dv8tion.jda.api.entities.Message;
 import org.junit.jupiter.api.BeforeEach;

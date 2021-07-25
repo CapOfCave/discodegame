@@ -1,4 +1,4 @@
-package me.kecker.discodegame.bot.architecture.commands;
+package me.kecker.discodegame.bot.commands;
 
 import me.kecker.discodegame.bot.domain.commands.BotCommand;
 import me.kecker.discodegame.test.annotationclasses.AnnotationTestClasses;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.*;

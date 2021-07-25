@@ -1,4 +1,4 @@
-package me.kecker.discodegame.bot.architecture.commands;
+package me.kecker.discodegame.bot.commands;
 
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;

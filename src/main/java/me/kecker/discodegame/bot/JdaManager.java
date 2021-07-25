@@ -1,4 +1,4 @@
-package me.kecker.discodegame.bot.architecture;
+package me.kecker.discodegame.bot;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
