@@ -4,6 +4,7 @@ import me.kecker.discodegame.bot.domain.annotations.RegisteredGuildCommand;
 import me.kecker.discodegame.bot.domain.commands.BotCommandMetaAdapter;
 import me.kecker.discodegame.bot.domain.commands.arguments.ArgumentNecessity;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgumentMeta;
+import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgument;
 import me.kecker.discodegame.bot.domain.commands.arguments.types.ArgumentTypes;
 import org.springframework.stereotype.Component;
 
@@ -22,9 +23,8 @@ public class CreateLobbyCommandMeta extends BotCommandMetaAdapter {
     }
 
     @Override
-    public void accept() {
-        //TODO call create Lobby
-        System.out.println("Created Lobby.");
+    public void accept(List<BotCommandArgument<?>> arguments) {
+        System.out.printf("Created Lobby %s.%n", arguments.get(0));
     }
 
 }

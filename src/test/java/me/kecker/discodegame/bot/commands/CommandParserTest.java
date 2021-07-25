@@ -29,11 +29,14 @@ class CommandParserTest {
     @Mock
     private Message messageMock;
 
+    @Mock
+    private ArgumentParser argumentParserMock;
+
     private CommandParser objectUnderTest;
 
     @BeforeEach
     public void setUp() {
-        this.objectUnderTest = new CommandParser();
+        this.objectUnderTest = new CommandParser(this.argumentParserMock);
         ReflectionTestUtils.setField(this.objectUnderTest, "prefix", PREFIX);
         ReflectionTestUtils.setField(this.objectUnderTest, "ignoreWhiteSpaceAfterPrefix", false);
         ReflectionTestUtils.setField(this.objectUnderTest, "ignorePrefixCase", false);

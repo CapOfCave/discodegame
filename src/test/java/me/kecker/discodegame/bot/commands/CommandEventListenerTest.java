@@ -1,7 +1,6 @@
 package me.kecker.discodegame.bot.commands;
 
-import me.kecker.discodegame.bot.domain.commands.BotCommandMeta;
-import me.kecker.discodegame.test.annotationclasses.AnnotationTestClasses;
+import me.kecker.discodegame.bot.domain.commands.CommandExecutionDTO;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -24,10 +23,7 @@ class CommandEventListenerTest {
     private CommandParser commandParserMock;
 
     @Mock
-    private AnnotationTestClasses.RegisteredGuildCommandBotCommand guildCommandMock;
-
-    @Mock
-    private BotCommandMeta nonGuildCommandMock;
+    private CommandManager commandManagerMock;
 
     @Mock
     private GuildMessageReceivedEvent guildMessageReceivedEventMock;
@@ -35,40 +31,22 @@ class CommandEventListenerTest {
     @Mock
     private Message messageMock;
 
-    private static final String COMMAND_NAME = "commandName";
-    private static final String UNKNOWN_COMMAND_NAME = "unknownCommandName";
-    private static final String COMMAND_ALIAS = "alias";
+    private static final CommandExecutionDTO COMMAND_EXECUTION_DTO = new CommandExecutionDTO("commandName");
 
     @BeforeEach
     void setUp() {
-        when(this.guildCommandMock.getName()).thenReturn(COMMAND_NAME);
-        when(this.guildCommandMock.getAliases()).thenReturn(List.of(COMMAND_ALIAS));
         when(this.guildMessageReceivedEventMock.getMessage()).thenReturn(messageMock);
-
-        this.objectUnderTest = new CommandEventListener(this.commandParserMock, List.of(this.guildCommandMock, this.nonGuildCommandMock));
+        this.objectUnderTest = new CommandEventListener(this.commandParserMock, this.commandManagerMock);
     }
 
     @Test
     void testOnGuildMessageReceived() {
         when(this.commandParserMock.isCommand(this.messageMock)).thenReturn(true);
-        when(this.commandParserMock.getCommandName(this.messageMock)).thenReturn(COMMAND_NAME);
+        when(this.commandParserMock.mapToCommandExecutionDTO(messageMock)).thenReturn(Optional.of(COMMAND_EXECUTION_DTO));
 
         this.objectUnderTest.onGuildMessageReceived(this.guildMessageReceivedEventMock);
 
-        verify(this.guildCommandMock, times(1)).accept();
-        verify(this.nonGuildCommandMock, never()).accept();
-    }
-
-    @Test
-    void testOnGuildMessageReceivedUnknownCommand() {
-        when(this.commandParserMock.isCommand(this.messageMock)).thenReturn(true);
-        when(this.commandParserMock.getCommandName(this.messageMock)).thenReturn(UNKNOWN_COMMAND_NAME);
-
-        this.objectUnderTest.onGuildMessageReceived(this.guildMessageReceivedEventMock);
-
-        // nothing happens
-        verify(this.guildCommandMock, never()).accept();
-        verify(this.nonGuildCommandMock, never()).accept();
+        verify(this.commandManagerMock, times(1)).tryExecute(COMMAND_EXECUTION_DTO);
     }
 
     @Test
@@ -78,19 +56,9 @@ class CommandEventListenerTest {
         this.objectUnderTest.onGuildMessageReceived(this.guildMessageReceivedEventMock);
 
         // nothing happens
-        verify(this.guildCommandMock, never()).accept();
-        verify(this.nonGuildCommandMock, never()).accept();
-    }
+        verify(this.commandManagerMock, never()).tryExecute(any(CommandExecutionDTO.class));
+        verify(this.commandParserMock, never()).mapToCommandExecutionDTO(any(Message.class));
+        verify(this.commandParserMock, never()).mapToCommandExecutionDTO(any(String.class));
 
-    @Test
-    void testOnGuildMessageReceivedAlias() {
-        when(this.commandParserMock.isCommand(this.messageMock)).thenReturn(true);
-        when(this.commandParserMock.getCommandName(this.messageMock)).thenReturn(COMMAND_ALIAS);
-
-        this.objectUnderTest.onGuildMessageReceived(this.guildMessageReceivedEventMock);
-
-        // nothing happens
-        verify(this.guildCommandMock, times(1)).accept();
-        verify(this.nonGuildCommandMock, never()).accept();
     }
 }
