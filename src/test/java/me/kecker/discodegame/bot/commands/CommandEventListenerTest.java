@@ -1,6 +1,6 @@
 package me.kecker.discodegame.bot.commands;
 
-import me.kecker.discodegame.bot.domain.commands.BotCommand;
+import me.kecker.discodegame.bot.domain.commands.BotCommandMeta;
 import me.kecker.discodegame.test.annotationclasses.AnnotationTestClasses;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -27,7 +27,7 @@ class CommandEventListenerTest {
     private AnnotationTestClasses.RegisteredGuildCommandBotCommand guildCommandMock;
 
     @Mock
-    private BotCommand nonGuildCommandMock;
+    private BotCommandMeta nonGuildCommandMock;
 
     @Mock
     private GuildMessageReceivedEvent guildMessageReceivedEventMock;
