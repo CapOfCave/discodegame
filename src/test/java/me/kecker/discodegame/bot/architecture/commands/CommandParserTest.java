@@ -2,6 +2,7 @@ package me.kecker.discodegame.bot.architecture.commands;
 
 import net.dv8tion.jda.api.entities.Message;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -10,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -98,7 +100,14 @@ class CommandParserTest {
         assertThat(this.objectUnderTest.getCommandName(this.messageMock)).isEqualTo(COMMAND);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"fail"})
+    void failing(String val) {
+        fail(val);
+    }
     private void mockMessageContent(String content) {
         when(this.messageMock.getContentRaw()).thenReturn(content);
     }
+
+
 }
