@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.kecker.discodegame.bot.domain.annotations.RegisteredEventListener;
 import me.kecker.discodegame.bot.domain.annotations.RegisteredGuildCommand;
 import me.kecker.discodegame.bot.domain.commands.BotCommand;
-import me.kecker.discodegame.utils.StreamUtils;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RegisteredEventListener
@@ -28,7 +26,7 @@ public class CommandEventListener extends ListenerAdapter {
     private final Map<String, BotCommand> guildCommands = new HashMap<>();
 
     @Autowired
-    public CommandEventListener(@NonNull CommandParser commandParser, Collection<? extends BotCommand> allCommands) {
+    public CommandEventListener(@NonNull CommandParser commandParser, @NonNull Collection<? extends BotCommand> allCommands) {
         this.commandParser = commandParser;
         allCommands
                 .stream()
@@ -43,15 +41,13 @@ public class CommandEventListener extends ListenerAdapter {
             return;
         }
         String commandName = this.commandParser.getCommandName(event.getMessage());
-        executeCommand(commandName);
+        if (this.guildCommands.containsKey(commandName)) {
+            this.guildCommands.get(commandName).accept();
+        }
     }
 
     private void addToGuildCommands(BotCommand botCommand) {
         this.guildCommands.putIfAbsent(botCommand.getName(), botCommand);
         botCommand.getAliases().forEach(alias -> this.guildCommands.putIfAbsent(alias, botCommand));
-    }
-
-    private void executeCommand(String commandName) {
-        this.guildCommands.get(commandName).accept();
     }
 }

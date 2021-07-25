@@ -15,10 +15,11 @@ import java.util.HashSet;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class SessionManager {
 
-    private EventManager eventManager;
+    @NonNull
+    private final EventManager eventManager;
 
     @NonNull
-    private Collection<Lobby> activeLobbies = new HashSet<>();
+    private final Collection<Lobby> activeLobbies = new HashSet<>();
 
 
     public void createLobby(String id) {

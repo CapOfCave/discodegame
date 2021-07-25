@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor(onConstructor_ = @Autowired)
 public class CodeGameImpl implements CodeGame {
 
-    private SessionManager sessionManager;
+    private final SessionManager sessionManager;
 
     @Override
     public void createLobby(String id) {
