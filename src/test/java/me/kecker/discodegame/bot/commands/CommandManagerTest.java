@@ -1,8 +1,8 @@
 package me.kecker.discodegame.bot.commands;
 
 import me.kecker.discodegame.bot.domain.commands.BotCommandMeta;
-import me.kecker.discodegame.bot.domain.commands.CommandExecutionDTO;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgument;
+import me.kecker.discodegame.bot.domain.exceptions.ArgumentParseException;
 import me.kecker.discodegame.test.annotationclasses.AnnotationTestClasses;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +20,9 @@ import static org.mockito.Mockito.*;
 class CommandManagerTest {
 
     private CommandManager objectUnderTest;
+
+    @Mock
+    private CommandLexer commandLexerMock;
 
     @Mock
     private AnnotationTestClasses.RegisteredGuildCommandBotCommand guildCommandMock;
@@ -40,14 +43,12 @@ class CommandManagerTest {
         when(this.guildCommandMock.getName()).thenReturn(COMMAND_NAME);
         when(this.guildCommandMock.getAliases()).thenReturn(List.of(COMMAND_ALIAS));
 
-        this.objectUnderTest = new CommandManager(List.of(this.guildCommandMock, this.nonGuildCommandMock));
+        this.objectUnderTest = new CommandManager(this.commandLexerMock, List.of(this.guildCommandMock, this.nonGuildCommandMock));
     }
 
     @Test
-    void testTryExecute() {
-        CommandExecutionDTO commandExecutionDTO = new CommandExecutionDTO(COMMAND_NAME);
-
-        this.objectUnderTest.tryExecute(commandExecutionDTO);
+    void testTryExecute() throws ArgumentParseException {
+        this.objectUnderTest.handleCommand(COMMAND_NAME);
 
         verify(this.guildCommandMock, times(1)).accept(this.botCommandArgumentCaptor.capture());
         verify(this.nonGuildCommandMock, never()).accept(anyList());
@@ -56,10 +57,8 @@ class CommandManagerTest {
     }
 
     @Test
-    void testTryExecuteUnknownCommand() {
-        CommandExecutionDTO commandExecutionDTO = new CommandExecutionDTO(UNKNOWN_COMMAND_NAME);
-
-        this.objectUnderTest.tryExecute(commandExecutionDTO);
+    void testTryExecuteUnknownCommand() throws ArgumentParseException {
+        this.objectUnderTest.handleCommand(UNKNOWN_COMMAND_NAME);
 
         // nothing happens
         verify(this.guildCommandMock, never()).accept(anyList());
@@ -67,10 +66,8 @@ class CommandManagerTest {
     }
 
     @Test
-    void testOnGuildMessageReceivedAlias() {
-        CommandExecutionDTO commandExecutionDTO = new CommandExecutionDTO(COMMAND_ALIAS);
-
-        this.objectUnderTest.tryExecute(commandExecutionDTO);
+    void testOnGuildMessageReceivedAlias() throws ArgumentParseException {
+        this.objectUnderTest.handleCommand(COMMAND_ALIAS);
 
         verify(this.guildCommandMock, times(1)).accept(this.botCommandArgumentCaptor.capture());
         verify(this.nonGuildCommandMock, never()).accept(anyList());

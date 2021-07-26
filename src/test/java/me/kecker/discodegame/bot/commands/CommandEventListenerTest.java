@@ -1,6 +1,6 @@
 package me.kecker.discodegame.bot.commands;
 
-import me.kecker.discodegame.bot.domain.commands.CommandExecutionDTO;
+import me.kecker.discodegame.bot.domain.exceptions.ArgumentParseException;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -20,7 +18,7 @@ class CommandEventListenerTest {
     private CommandEventListener objectUnderTest;
 
     @Mock
-    private CommandParser commandParserMock;
+    private CommandLexer commandLexerMock;
 
     @Mock
     private CommandManager commandManagerMock;
@@ -31,34 +29,34 @@ class CommandEventListenerTest {
     @Mock
     private Message messageMock;
 
-    private static final CommandExecutionDTO COMMAND_EXECUTION_DTO = new CommandExecutionDTO("commandName");
+    private static final String RAW_COMMAND = "rawCommand";
 
     @BeforeEach
     void setUp() {
         when(this.guildMessageReceivedEventMock.getMessage()).thenReturn(messageMock);
-        this.objectUnderTest = new CommandEventListener(this.commandParserMock, this.commandManagerMock);
+        this.objectUnderTest = new CommandEventListener(this.commandLexerMock, this.commandManagerMock);
     }
 
     @Test
-    void testOnGuildMessageReceived() {
-        when(this.commandParserMock.isCommand(this.messageMock)).thenReturn(true);
-        when(this.commandParserMock.mapToCommandExecutionDTO(messageMock)).thenReturn(Optional.of(COMMAND_EXECUTION_DTO));
+    void testOnGuildMessageReceived() throws ArgumentParseException {
+        when(this.commandLexerMock.isCommand(this.messageMock)).thenReturn(true);
+        when(this.messageMock.getContentRaw()).thenReturn(RAW_COMMAND);
 
         this.objectUnderTest.onGuildMessageReceived(this.guildMessageReceivedEventMock);
 
-        verify(this.commandManagerMock, times(1)).tryExecute(COMMAND_EXECUTION_DTO);
+        verify(this.commandManagerMock, times(1)).handleCommand(RAW_COMMAND);
     }
 
     @Test
-    void testOnGuildMessageReceivedNoCommand() {
-        when(this.commandParserMock.isCommand(this.messageMock)).thenReturn(false);
+    void testOnGuildMessageReceivedNoCommand() throws ArgumentParseException {
+        when(this.commandLexerMock.isCommand(this.messageMock)).thenReturn(false);
 
         this.objectUnderTest.onGuildMessageReceived(this.guildMessageReceivedEventMock);
 
         // nothing happens
-        verify(this.commandManagerMock, never()).tryExecute(any(CommandExecutionDTO.class));
-        verify(this.commandParserMock, never()).mapToCommandExecutionDTO(any(Message.class));
-        verify(this.commandParserMock, never()).mapToCommandExecutionDTO(any(String.class));
+        verify(this.commandManagerMock, never()).handleCommand(anyString());
+        verify(this.commandLexerMock, never()).tokenizeMessage(any(Message.class));
+        verify(this.commandLexerMock, never()).tokenizeMessage(any(String.class));
 
     }
 }

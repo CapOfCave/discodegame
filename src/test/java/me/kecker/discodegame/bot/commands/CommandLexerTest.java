@@ -13,7 +13,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CommandParserTest {
+class CommandLexerTest {
 
     private static final String PREFIX = "prefix";
     private static final String COMMAND = "command";
@@ -30,13 +30,13 @@ class CommandParserTest {
     private Message messageMock;
 
     @Mock
-    private ArgumentParser argumentParserMock;
+    private ArgumentLexer argumentLexerMock;
 
-    private CommandParser objectUnderTest;
+    private CommandLexer objectUnderTest;
 
     @BeforeEach
     public void setUp() {
-        this.objectUnderTest = new CommandParser(this.argumentParserMock);
+        this.objectUnderTest = new CommandLexer(this.argumentLexerMock);
         ReflectionTestUtils.setField(this.objectUnderTest, "prefix", PREFIX);
         ReflectionTestUtils.setField(this.objectUnderTest, "ignoreWhiteSpaceAfterPrefix", false);
         ReflectionTestUtils.setField(this.objectUnderTest, "ignorePrefixCase", false);
