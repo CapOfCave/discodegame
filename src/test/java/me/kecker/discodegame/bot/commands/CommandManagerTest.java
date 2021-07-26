@@ -5,6 +5,7 @@ import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgument;
 import me.kecker.discodegame.bot.domain.exceptions.ArgumentParseException;
 import me.kecker.discodegame.test.annotationclasses.AnnotationTestClasses;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -17,6 +18,7 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@Disabled("Not yet implemented")
 class CommandManagerTest {
 
     private CommandManager objectUnderTest;
