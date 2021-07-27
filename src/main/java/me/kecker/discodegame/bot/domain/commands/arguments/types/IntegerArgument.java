@@ -19,4 +19,9 @@ public class IntegerArgument implements ArgumentType<Integer> {
     public Integer getValue(String input) {
         return Integer.parseInt(input);
     }
+
+    @Override
+    public String getLabel() {
+        return "Integer";
+    }
 }

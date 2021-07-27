@@ -1,6 +1,4 @@
 package me.kecker.discodegame.bot.domain.commands.arguments;
 
-public class BotCommandArgument<T> {
-    private BotCommandArgumentMeta<T> meta;
-    private T value;
+public record BotCommandArgument<T>(BotCommandArgumentMeta<T> meta, T value) {
 }

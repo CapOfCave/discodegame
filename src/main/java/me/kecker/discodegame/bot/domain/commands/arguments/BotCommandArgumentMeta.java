@@ -6,6 +6,7 @@ import me.kecker.discodegame.bot.domain.commands.arguments.types.ArgumentType;
 import java.util.Collection;
 import java.util.Collections;
 
+//TODO make record
 public class BotCommandArgumentMeta<T> {
 
     @NonNull
@@ -39,4 +40,13 @@ public class BotCommandArgumentMeta<T> {
         return new BotCommandArgumentMeta<>(name, type, aliases, necessity);
     }
 
+    @NonNull
+    public ArgumentType<T> getType() {
+        return this.type;
+    }
+
+    @NonNull
+    public String getName() {
+        return this.name;
+    }
 }

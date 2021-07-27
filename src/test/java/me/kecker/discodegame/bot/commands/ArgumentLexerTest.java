@@ -1,7 +1,7 @@
 package me.kecker.discodegame.bot.commands;
 
 import me.kecker.discodegame.bot.domain.commands.arguments.RawArgument;
-import me.kecker.discodegame.bot.domain.exceptions.ArgumentParseException;
+import me.kecker.discodegame.bot.domain.exceptions.ArgumentSyntaxException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,7 +22,7 @@ class ArgumentLexerTest {
     }
 
     @Test
-    void tokenizeEmptyString() throws ArgumentParseException {
+    void tokenizeEmptyString() throws ArgumentSyntaxException {
         String rawString = "";
         List<RawArgument> result = this.objectUnderTest.tokenize(rawString);
         assertThat(result)
@@ -32,7 +32,7 @@ class ArgumentLexerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"someValue", "\"someValue\""})
-    void tokenizeOneArgumentWithoutName(String rawString) throws ArgumentParseException {
+    void tokenizeOneArgumentWithoutName(String rawString) throws ArgumentSyntaxException {
         List<RawArgument> result = this.objectUnderTest.tokenize(rawString);
         assertThat(result)
                 .isNotNull()
@@ -44,7 +44,7 @@ class ArgumentLexerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"someKey=someValue", "\"someKey\"=\"someValue\"", "\"someKey\"=someValue", "someKey=\"someValue\""})
-    void tokenizeOneArgumentWithName(String rawString) throws ArgumentParseException {
+    void tokenizeOneArgumentWithName(String rawString) throws ArgumentSyntaxException {
         List<RawArgument> result = this.objectUnderTest.tokenize(rawString);
         assertThat(result)
                 .isNotNull()
@@ -55,7 +55,7 @@ class ArgumentLexerTest {
     }
 
     @Test
-    void tokenizeMultipleArgumentsWithoutName() throws ArgumentParseException {
+    void tokenizeMultipleArgumentsWithoutName() throws ArgumentSyntaxException {
         String rawString = "someValue someOtherValue";
         List<RawArgument> result = this.objectUnderTest.tokenize(rawString);
         assertThat(result)
@@ -65,7 +65,7 @@ class ArgumentLexerTest {
     }
 
     @Test
-    void tokenizeMultipleArgumentsWithName() throws ArgumentParseException {
+    void tokenizeMultipleArgumentsWithName() throws ArgumentSyntaxException {
         String rawString = "someKey=someValue someOtherKey=someOtherValue";
         List<RawArgument> result = this.objectUnderTest.tokenize(rawString);
         assertThat(result)
@@ -75,7 +75,7 @@ class ArgumentLexerTest {
     }
 
     @Test
-    void tokenizeArgumentsWithKeyAndWithout() throws ArgumentParseException {
+    void tokenizeArgumentsWithKeyAndWithout() throws ArgumentSyntaxException {
         String rawString = "someValue someOtherKey=someOtherValue";
         List<RawArgument> result = this.objectUnderTest.tokenize(rawString);
         assertThat(result)
@@ -85,7 +85,7 @@ class ArgumentLexerTest {
     }
 
     @Test
-    void tokenizeArgumentsWithKeyAndWithoutReverseOrder() throws ArgumentParseException {
+    void tokenizeArgumentsWithKeyAndWithoutReverseOrder() throws ArgumentSyntaxException {
         String rawString = "someOtherKey=someOtherValue someValue";
         List<RawArgument> result = this.objectUnderTest.tokenize(rawString);
         assertThat(result)
@@ -95,7 +95,7 @@ class ArgumentLexerTest {
     }
 
     @Test
-    void tokenizeManyArguments() throws ArgumentParseException {
+    void tokenizeManyArguments() throws ArgumentSyntaxException {
         String rawString = "1 2 3 a=4 b=5 c=6";
         List<RawArgument> result = this.objectUnderTest.tokenize(rawString);
         assertThat(result)
@@ -111,7 +111,7 @@ class ArgumentLexerTest {
     }
 
     @Test
-    void tokenizeIgnoreSpaceInQuotes() throws ArgumentParseException {
+    void tokenizeIgnoreSpaceInQuotes() throws ArgumentSyntaxException {
         String rawString = "\"key with space\"=\"value with space\"";
         List<RawArgument> result = this.objectUnderTest.tokenize(rawString);
         assertThat(result)
@@ -123,7 +123,7 @@ class ArgumentLexerTest {
     }
 
     @Test
-    void tokenizeIgnoreEqualsInQuotes() throws ArgumentParseException {
+    void tokenizeIgnoreEqualsInQuotes() throws ArgumentSyntaxException {
         String rawString = "\"some=key\"=\"some=value\"";
         List<RawArgument> result = this.objectUnderTest.tokenize(rawString);
         assertThat(result)
@@ -135,7 +135,7 @@ class ArgumentLexerTest {
     }
 
     @Test
-    void tokenizeIgnoreEscapedQuotes() throws ArgumentParseException {
+    void tokenizeIgnoreEscapedQuotes() throws ArgumentSyntaxException {
         String rawString = "\"some\\\"key\"=\"some\\\"value\"";
         List<RawArgument> result = this.objectUnderTest.tokenize(rawString);
         assertThat(result)
@@ -147,7 +147,7 @@ class ArgumentLexerTest {
     }
 
     @Test
-    void tokenizeConsiderBackslashWithoutQuotes() throws ArgumentParseException {
+    void tokenizeConsiderBackslashWithoutQuotes() throws ArgumentSyntaxException {
         String rawString = "\"some\\key\"=\"some\\value\"";
         List<RawArgument> result = this.objectUnderTest.tokenize(rawString);
         assertThat(result)
@@ -159,7 +159,7 @@ class ArgumentLexerTest {
     }
 
     @Test
-    void tokenizeMultipleWhitespacesBetweenArguments() throws ArgumentParseException {
+    void tokenizeMultipleWhitespacesBetweenArguments() throws ArgumentSyntaxException {
         String rawString = "1  2 \n3";
         List<RawArgument> result = this.objectUnderTest.tokenize(rawString);
         assertThat(result)
@@ -173,6 +173,6 @@ class ArgumentLexerTest {
     @Test
     void tokenizeWhitespacesBeforeEquals() {
         String rawString = "1 = 5\n2 = 10 2";
-        assertThrows(ArgumentParseException.IllegallyEmptyString.class, () -> this.objectUnderTest.tokenize(rawString));
+        assertThrows(ArgumentSyntaxException.IllegallyEmptyString.class, () -> this.objectUnderTest.tokenize(rawString));
     }
 }

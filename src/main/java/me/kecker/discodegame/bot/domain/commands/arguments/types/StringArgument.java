@@ -15,4 +15,9 @@ public class StringArgument implements ArgumentType<String> {
     public String getValue(String input) {
         return input;
     }
+
+    @Override
+    public String getLabel() {
+        return "String";
+    }
 }

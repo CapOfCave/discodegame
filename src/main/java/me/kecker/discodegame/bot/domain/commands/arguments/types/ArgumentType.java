@@ -18,4 +18,9 @@ public interface ArgumentType<T> {
      * @return The argument as the correct type.
      */
     T getValue(String input);
+
+    /**
+     * @return The name of this ArgumentType in a user-friendly form
+     */
+    String getLabel();
 }

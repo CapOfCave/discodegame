@@ -2,7 +2,7 @@ package me.kecker.discodegame.bot.commands;
 
 import lombok.NonNull;
 import me.kecker.discodegame.bot.domain.commands.arguments.RawArgument;
-import me.kecker.discodegame.bot.domain.exceptions.ArgumentParseException;
+import me.kecker.discodegame.bot.domain.exceptions.ArgumentSyntaxException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ public class ArgumentLexer {
     private static final Set<Character> ESCAPABLE_CHARS_IN_QUOTED_STRING = Set.of('\\', '"');
 
     @NonNull
-    public List<RawArgument> tokenize(@NonNull String argumentsRaw) throws ArgumentParseException {
+    public List<RawArgument> tokenize(@NonNull String argumentsRaw) throws ArgumentSyntaxException {
         var lexerState = new ArgumentLexState(argumentsRaw);
         List<RawArgument> arguments = new ArrayList<>();
         while (lexerState.hasNext()) {
@@ -25,7 +25,7 @@ public class ArgumentLexer {
     }
 
     @NonNull
-    private RawArgument tokenizeArgument(ArgumentLexState parseState) throws ArgumentParseException {
+    private RawArgument tokenizeArgument(ArgumentLexState parseState) throws ArgumentSyntaxException {
         String firstWord = tokenizeWord(parseState, false);
         String argumentName = null;
         String argumentValue;
@@ -36,13 +36,13 @@ public class ArgumentLexer {
         } else if (!parseState.hasNext() || Character.isWhitespace(parseState.getCurrent())) {
             argumentValue = firstWord;
         } else {
-            throw new ArgumentParseException.IllegalCharacterParseException(parseState.getCurrent());
+            throw new ArgumentSyntaxException.IllegalCharacterSyntaxException(parseState.getCurrent());
         }
         return new RawArgument(argumentName, argumentValue);
     }
 
     @NotNull
-    private String tokenizeWord(@NotNull ArgumentLexState parseState, boolean allowEmpty) throws ArgumentParseException {
+    private String tokenizeWord(@NotNull ArgumentLexState parseState, boolean allowEmpty) throws ArgumentSyntaxException {
         if (isQuote(parseState.getCurrent())) {
             return tokenizeQuotedWord(parseState, allowEmpty);
         }
@@ -51,21 +51,21 @@ public class ArgumentLexer {
 
 
     @NotNull
-    private String tokenizeQuotedWord(@NotNull ArgumentLexState parseState, boolean allowEmpty) throws ArgumentParseException {
+    private String tokenizeQuotedWord(@NotNull ArgumentLexState parseState, boolean allowEmpty) throws ArgumentSyntaxException {
         if (!isQuote(parseState.getCurrent())) {
-            throw new ArgumentParseException.MissingQuoteParseException();
+            throw new ArgumentSyntaxException.MissingQuoteSyntaxException();
         }
         parseState.advance();
         String unquotedWord = tokenizeUnquotedWord(parseState, c -> isQuote(c), ESCAPABLE_CHARS_IN_QUOTED_STRING, allowEmpty);
         if (!isQuote(parseState.getCurrent())) {
-            throw new ArgumentParseException.MissingQuoteParseException();
+            throw new ArgumentSyntaxException.MissingQuoteSyntaxException();
         }
         parseState.advance();
         return unquotedWord;
     }
 
     @NotNull
-    private String tokenizeUnquotedWord(@NotNull ArgumentLexState parseState, Predicate<Character> wordEndCondition, Set<Character> escapableChars, boolean allowEmpty) throws ArgumentParseException {
+    private String tokenizeUnquotedWord(@NotNull ArgumentLexState parseState, Predicate<Character> wordEndCondition, Set<Character> escapableChars, boolean allowEmpty) throws ArgumentSyntaxException {
         var identifierBuilder = new StringBuilder();
         while (parseState.hasNext() && !wordEndCondition.test(parseState.getCurrent())) {
             if (parseState.getCurrent() == '\\') {
@@ -74,13 +74,13 @@ public class ArgumentLexer {
                 continue; // check condition again
             }
             if (isQuote(parseState.getCurrent())) {
-                throw new ArgumentParseException.IllegalCharacterParseException(parseState.getCurrent());
+                throw new ArgumentSyntaxException.IllegalCharacterSyntaxException(parseState.getCurrent());
             }
             identifierBuilder.append(parseState.getCurrent());
             parseState.advance();
         }
         if (!allowEmpty && identifierBuilder.isEmpty()) {
-            throw new ArgumentParseException.IllegallyEmptyString();
+            throw new ArgumentSyntaxException.IllegallyEmptyString();
         }
         return identifierBuilder.toString();
     }

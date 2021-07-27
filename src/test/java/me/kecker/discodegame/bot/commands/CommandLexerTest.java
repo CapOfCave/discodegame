@@ -40,7 +40,6 @@ class CommandLexerTest {
         ReflectionTestUtils.setField(this.objectUnderTest, "prefix", PREFIX);
         ReflectionTestUtils.setField(this.objectUnderTest, "ignoreWhiteSpaceAfterPrefix", false);
         ReflectionTestUtils.setField(this.objectUnderTest, "ignorePrefixCase", false);
-
     }
 
     @ParameterizedTest
@@ -78,7 +77,7 @@ class CommandLexerTest {
         assertThat(this.objectUnderTest.isCommand(this.messageMock)).isTrue();
     }
 
-
+    @Deprecated
     @ParameterizedTest
     @ValueSource(strings = {COMMAND_WITH_PREFIX, COMMAND_WITH_PREFIX_WITH_ARGUMENTS})
     void testGetCommandName(String content) {
@@ -86,6 +85,7 @@ class CommandLexerTest {
         assertThat(this.objectUnderTest.getCommandName(this.messageMock)).isEqualTo(COMMAND);
     }
 
+    @Deprecated
     @ParameterizedTest
     @ValueSource(strings = {COMMAND_WITH_PREFIX, COMMAND_WITH_PREFIX_AND_SPACE, COMMAND_WITH_PREFIX_WITH_ARGUMENTS, COMMAND_WITH_PREFIX_AND_SPACE_WITH_ARGUMENTS})
     void testGetCommandNameIgnoreSpace(String content) {
@@ -94,6 +94,7 @@ class CommandLexerTest {
         assertThat(this.objectUnderTest.getCommandName(this.messageMock)).isEqualTo(COMMAND);
     }
 
+    @Deprecated
     @ParameterizedTest
     @ValueSource(strings = {COMMAND_WITH_PREFIX, COMMAND_WITH_PREFIX_WITH_ARGUMENTS})
     void testGetCommandNameIgnoreCase(String content) {

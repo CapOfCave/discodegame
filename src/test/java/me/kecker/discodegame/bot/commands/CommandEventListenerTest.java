@@ -1,6 +1,8 @@
 package me.kecker.discodegame.bot.commands;
 
 import me.kecker.discodegame.bot.domain.exceptions.ArgumentParseException;
+import me.kecker.discodegame.bot.domain.exceptions.ArgumentSyntaxException;
+import me.kecker.discodegame.bot.domain.exceptions.IllegalCommandArgumentException;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +40,7 @@ class CommandEventListenerTest {
     }
 
     @Test
-    void testOnGuildMessageReceived() throws ArgumentParseException {
+    void testOnGuildMessageReceived() throws ArgumentSyntaxException, IllegalCommandArgumentException, ArgumentParseException {
         when(this.commandLexerMock.isCommand(this.messageMock)).thenReturn(true);
         when(this.messageMock.getContentRaw()).thenReturn(RAW_COMMAND);
 
@@ -48,7 +50,7 @@ class CommandEventListenerTest {
     }
 
     @Test
-    void testOnGuildMessageReceivedNoCommand() throws ArgumentParseException {
+    void testOnGuildMessageReceivedNoCommand() throws ArgumentSyntaxException, IllegalCommandArgumentException, ArgumentParseException {
         when(this.commandLexerMock.isCommand(this.messageMock)).thenReturn(false);
 
         this.objectUnderTest.onGuildMessageReceived(this.guildMessageReceivedEventMock);

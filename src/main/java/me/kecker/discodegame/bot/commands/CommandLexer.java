@@ -1,12 +1,10 @@
 package me.kecker.discodegame.bot.commands;
 
 import lombok.NonNull;
-import me.kecker.discodegame.bot.domain.commands.CommandExecutionDTO;
 import me.kecker.discodegame.bot.domain.commands.arguments.RawArgument;
-import me.kecker.discodegame.bot.domain.exceptions.ArgumentParseException;
+import me.kecker.discodegame.bot.domain.exceptions.ArgumentSyntaxException;
 import net.dv8tion.jda.api.entities.Message;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,17 +16,15 @@ import java.util.List;
 public class CommandLexer {
 
     @NonNull
-    private ArgumentLexer argumentLexer;
+    private final ArgumentLexer argumentLexer;
 
     @NonNull
     @Value("${dcg.bot.prefix.value:!}")
     private String prefix;
 
-    @NonNull
     @Value("${dcg.bot.prefix.ignoreSpace:true}")
     private boolean ignoreWhiteSpaceAfterPrefix;
 
-    @NonNull
     @Value("${dcg.bot.prefix.ignoreCase:false}")
     private boolean ignorePrefixCase;
 
@@ -41,7 +37,7 @@ public class CommandLexer {
         return isCommand(message.getContentRaw());
     }
 
-    public Result tokenizeMessage(Message message) throws ArgumentParseException {
+    public Result tokenizeMessage(Message message) throws ArgumentSyntaxException {
         return tokenizeMessage(message.getContentRaw());
     }
 
@@ -55,13 +51,13 @@ public class CommandLexer {
     }
 
     @Deprecated
-    public String getCommandName(String messageContent) {
+    public String getCommandName(@NonNull String messageContent) {
         String contentWithoutPrefix = removePrefix(messageContent);
         String[] commandNameAndArguments = contentWithoutPrefix.split("\\s+", 2);
         return commandNameAndArguments[0];
     }
 
-    public Result tokenizeMessage(@NonNull String messageContent) throws ArgumentParseException {
+    public Result tokenizeMessage(@NonNull String messageContent) throws ArgumentSyntaxException {
         String contentWithoutPrefix = removePrefix(messageContent);
         String[] commandNameAndArguments = contentWithoutPrefix.split("\\s+", 2);
         String commandName = commandNameAndArguments[0];
@@ -73,7 +69,7 @@ public class CommandLexer {
         return new Result(commandName, arguments);
     }
 
-    @Nullable
+    @NonNull
     private String removePrefix(@NonNull String messageContent) {
         String contentWithoutPrefix = this.ignorePrefixCase ?
                 StringUtils.removeStartIgnoreCase(messageContent, this.prefix)
