@@ -50,6 +50,7 @@ class CommandEventListenerTest {
     }
 
     @Test
+    @Deprecated
     void testOnGuildMessageReceivedNoCommand() throws ArgumentSyntaxException, IllegalCommandArgumentException, ArgumentParseException {
         when(this.commandLexerMock.isCommand(this.messageMock)).thenReturn(false);
 

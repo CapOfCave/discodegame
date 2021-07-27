@@ -107,7 +107,4 @@ public class ArgumentLexer {
             lexerState.advance();
         }
     }
-
-    record Result(List<String> orderedArguments, Map<String, String> namedArguments) {
-    }
 }

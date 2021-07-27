@@ -4,7 +4,6 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import me.kecker.discodegame.bot.domain.annotations.RegisteredGuildCommand;
 import me.kecker.discodegame.bot.domain.commands.BotCommandMeta;
-import me.kecker.discodegame.bot.domain.commands.CommandExecution;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgument;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgumentMeta;
 import me.kecker.discodegame.bot.domain.commands.arguments.types.ArgumentType;
@@ -12,7 +11,7 @@ import me.kecker.discodegame.bot.domain.exceptions.ArgumentParseException;
 import me.kecker.discodegame.bot.domain.exceptions.ArgumentSyntaxException;
 import me.kecker.discodegame.bot.domain.exceptions.IllegalCommandArgumentException;
 import me.kecker.discodegame.utils.DcgMapUtils;
-import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -31,6 +30,7 @@ public class CommandManager {
     @NonNull
     private final Map<String, BotCommandMeta> guildCommands = new HashMap<>();
 
+    @Autowired
     public CommandManager(
             @NonNull CommandLexer commandLexer,
             @NonNull CommandParser commandParser,
@@ -72,7 +72,7 @@ public class CommandManager {
             }
             BotCommandArgumentMeta<?> argumentMeta = commandMeta.getArgumentMeta(i);
             String stringValue = orderedArguments.get(i);
-            result.put(argumentMeta.getName(), mapToBotCommandArgument(argumentMeta, stringValue));
+            result.put(argumentMeta.name(), mapToBotCommandArgument(argumentMeta, stringValue));
         }
         return result;
     }
@@ -82,13 +82,13 @@ public class CommandManager {
         for (var entry: namedArguments.entrySet()){
             BotCommandArgumentMeta<?> argumentMeta = commandMeta.getArgumentMeta(entry.getKey());
             // note that argumentMeta.getName may not be equal to entry.getKey() in case of aliases
-            result.put(argumentMeta.getName(), mapToBotCommandArgument(argumentMeta, entry.getValue()));
+            result.put(argumentMeta.name(), mapToBotCommandArgument(argumentMeta, entry.getValue()));
         }
         return result;
     }
 
     private <T> BotCommandArgument<T> mapToBotCommandArgument(BotCommandArgumentMeta<T> argumentMeta, String stringValue) throws IllegalCommandArgumentException.IllegalTypeException {
-        ArgumentType<T> type = argumentMeta.getType();
+        ArgumentType<T> type = argumentMeta.type();
         if (!type.matches(stringValue)){
             throw new IllegalCommandArgumentException.IllegalTypeException(type, stringValue);
         }

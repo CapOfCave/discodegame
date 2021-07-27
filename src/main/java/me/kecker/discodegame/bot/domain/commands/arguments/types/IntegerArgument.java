@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 public class IntegerArgument implements ArgumentType<Integer> {
 
-    private static Pattern matchPattern = Pattern.compile("\\d+");
+    private static final Pattern matchPattern = Pattern.compile("\\d+");
 
     IntegerArgument() {
         // should only be instantiated internally
@@ -12,7 +12,7 @@ public class IntegerArgument implements ArgumentType<Integer> {
 
     @Override
     public boolean matches(String input) {
-        return this.matchPattern.matcher(input).matches();
+        return matchPattern.matcher(input).matches();
     }
 
     @Override

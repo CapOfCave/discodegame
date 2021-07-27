@@ -1,13 +1,11 @@
 package me.kecker.discodegame.bot.domain.commands;
 
 import lombok.NonNull;
+import me.kecker.discodegame.bot.domain.commands.arguments.ArgumentNecessity;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgument;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgumentMeta;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.function.Function.identity;
@@ -34,7 +32,7 @@ public abstract class BotCommandMetaAdapter implements BotCommandMeta {
         this.argumentMetasByName =
                 this.argumentMetas
                         .stream()
-                        .collect(Collectors.toMap(BotCommandArgumentMeta::getName, identity()));
+                        .collect(Collectors.toMap(BotCommandArgumentMeta::name, identity()));
 
     }
 
@@ -46,12 +44,6 @@ public abstract class BotCommandMetaAdapter implements BotCommandMeta {
     @Override
     public @NonNull Collection<String> getAliases() {
         return this.aliases;
-    }
-
-    @Override
-    @Deprecated
-    public @NonNull List<BotCommandArgumentMeta<?>> getArgumentMetas() {
-        return this.argumentMetas;
     }
 
     @Override
@@ -70,7 +62,16 @@ public abstract class BotCommandMetaAdapter implements BotCommandMeta {
     }
 
     @SuppressWarnings("unchecked") // types are checked because of the way arguments was filled
-    protected <T> T getArg(Map<String, BotCommandArgument<?>> arguments, BotCommandArgumentMeta<T> argumentMeta) {
-        return (T) arguments.get(argumentMeta.getName());
+    protected <T> Optional<T> getArg(Map<String, BotCommandArgument<?>> arguments, BotCommandArgumentMeta<T> argumentMeta) {
+        return Optional.ofNullable((BotCommandArgument<T>) arguments.get(argumentMeta.name())).map(BotCommandArgument::value);
+    }
+
+    //TODO make required args required
+    @SuppressWarnings("unchecked") // types are checked because of the way arguments was filled
+    protected <T> T getRequiredArg(Map<String, BotCommandArgument<?>> arguments, BotCommandArgumentMeta<T> argumentMeta) {
+        if (argumentMeta.necessity() != ArgumentNecessity.REQUIRED){
+            throw new IllegalArgumentException("getRequiredArg can only be called with an argumentMeta whose necessity is REQUIRED.");
+        }
+        return (T) arguments.get(argumentMeta.name()).value();
     }
 }

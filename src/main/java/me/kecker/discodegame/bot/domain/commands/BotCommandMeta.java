@@ -1,11 +1,10 @@
 package me.kecker.discodegame.bot.domain.commands;
 
 import lombok.NonNull;
-import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgumentMeta;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgument;
+import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgumentMeta;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 public interface BotCommandMeta {
@@ -18,10 +17,6 @@ public interface BotCommandMeta {
 
     //TODO add caller id
     void accept(Map<String, BotCommandArgument<?>> argumentsByName);
-
-    @NonNull
-    @Deprecated
-    List<BotCommandArgumentMeta<?>> getArgumentMetas();
 
     @NonNull
     BotCommandArgumentMeta<?> getArgumentMeta(@NonNull String name);

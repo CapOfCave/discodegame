@@ -20,9 +20,7 @@ import java.util.Collection;
 @Component
 public class JdaManager {
 
-    private ApplicationContext applicationContext;
-
-    private Collection<? extends EventListener> allEventListeners;
+    private final Collection<? extends EventListener> allEventListeners;
 
     @Value("${dcg.bot.token}")
     private String token;
@@ -31,8 +29,7 @@ public class JdaManager {
     private JDA jda;
 
     @Autowired
-    public JdaManager(ApplicationContext applicationContext, Collection<? extends EventListener> allEventListeners) {
-        this.applicationContext = applicationContext;
+    public JdaManager(Collection<? extends EventListener> allEventListeners) {
         this.allEventListeners = allEventListeners;
     }
 

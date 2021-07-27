@@ -6,27 +6,11 @@ import me.kecker.discodegame.bot.domain.commands.arguments.types.ArgumentType;
 import java.util.Collection;
 import java.util.Collections;
 
-//TODO make record
-public class BotCommandArgumentMeta<T> {
-
-    @NonNull
-    private String name;
-
-    @NonNull
-    private Collection<String> aliases;
-
-    @NonNull
-    private ArgumentType<T> type;
-
-    @NonNull
-    private ArgumentNecessity necessity;
-
-    private BotCommandArgumentMeta(@NonNull String name, @NonNull ArgumentType<T> type, @NonNull Collection<String> aliases, ArgumentNecessity necessity) {
-        this.name = name;
-        this.type = type;
-        this.aliases = aliases;
-        this.necessity = necessity;
-    }
+public record BotCommandArgumentMeta<T>(
+        @NonNull String name,
+        @NonNull Collection<String> aliases,
+        @NonNull ArgumentType<T> type,
+        @NonNull ArgumentNecessity necessity) {
 
     public static <T> BotCommandArgumentMeta<T> of(@NonNull String name, @NonNull ArgumentType<T> type) {
         return of(name, type, Collections.emptyList(), ArgumentNecessity.REQUIRED);
@@ -37,16 +21,6 @@ public class BotCommandArgumentMeta<T> {
     }
 
     public static <T> BotCommandArgumentMeta<T> of(@NonNull String name, @NonNull ArgumentType<T> type, @NonNull Collection<String> aliases, @NonNull ArgumentNecessity necessity) {
-        return new BotCommandArgumentMeta<>(name, type, aliases, necessity);
-    }
-
-    @NonNull
-    public ArgumentType<T> getType() {
-        return this.type;
-    }
-
-    @NonNull
-    public String getName() {
-        return this.name;
+        return new BotCommandArgumentMeta<>(name, aliases, type, necessity);
     }
 }

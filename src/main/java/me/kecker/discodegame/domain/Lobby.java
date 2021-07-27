@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.entities.Guild;
 public class Lobby {
 
     @NonNull
-    private String id;
+    private final String id;
 
     private Guild guild;
 
