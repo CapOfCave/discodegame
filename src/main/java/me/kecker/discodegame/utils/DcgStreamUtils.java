@@ -3,7 +3,7 @@ package me.kecker.discodegame.utils;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-public final class StreamUtils {
+public final class DcgStreamUtils {
 
     public static <T> Collector<T, ?, T> toSingleton() {
         return Collectors.collectingAndThen(
@@ -18,7 +18,7 @@ public final class StreamUtils {
     }
 
 
-    private StreamUtils() {
+    private DcgStreamUtils() {
         // this class should not be instantiated
         throw new IllegalStateException();
     }
