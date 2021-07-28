@@ -1,6 +1,7 @@
 package me.kecker.discodegame.bot.commands;
 
 import lombok.NonNull;
+import me.kecker.discodegame.bot.commands.state.ArgumentLexState;
 import me.kecker.discodegame.bot.domain.commands.arguments.RawArgument;
 import me.kecker.discodegame.bot.domain.exceptions.ArgumentSyntaxException;
 import org.jetbrains.annotations.NotNull;

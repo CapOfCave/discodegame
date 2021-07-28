@@ -1,4 +1,4 @@
-package me.kecker.discodegame.bot.commands;
+package me.kecker.discodegame.bot.commands.state;
 
 import java.util.function.IntFunction;
 
