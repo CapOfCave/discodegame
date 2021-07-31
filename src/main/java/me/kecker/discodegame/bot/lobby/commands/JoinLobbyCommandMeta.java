@@ -20,7 +20,8 @@ import java.util.Map;
 @Component
 public class JoinLobbyCommandMeta extends BotCommandMetaAdapter {
 
-    private static final BotCommandArgumentMeta<String> LOBBY_ID = BotCommandArgumentMeta.of("lobbyId", ArgumentTypes.STRING_ARGUMENT,List.of("id"), ArgumentNecessity.REQUIRED);
+    static final BotCommandArgumentMeta<String> LOBBY_ID =
+            BotCommandArgumentMeta.of("lobbyId", ArgumentTypes.STRING_ARGUMENT,List.of("id"), ArgumentNecessity.REQUIRED);
 
     @NonNull
     private final CodeGame codeGame;
