@@ -5,7 +5,7 @@ import me.kecker.discodegame.domain.Player;
 
 public interface CodeGame {
 
-    void createLobby(@NonNull String id);
+    void createLobby(@NonNull LobbyCreateRequest lobbyCreateRequest);
 
     void joinLobby(@NonNull String lobbyId, @NonNull Player player);
 }
