@@ -21,9 +21,9 @@ import java.util.Map;
 @Component
 public class CreateLobbyCommandMeta extends BotCommandMetaAdapter {
 
-    public static final BotCommandArgumentMeta<String> LOBBY_NAME =
+    static final BotCommandArgumentMeta<String> LOBBY_NAME =
             BotCommandArgumentMeta.of("lobbyName", ArgumentTypes.STRING_ARGUMENT, List.of("name"), ArgumentNecessity.REQUIRED);
-    public static final BotCommandArgumentMeta<Integer> MAX =
+    static final BotCommandArgumentMeta<Integer> MAX =
             BotCommandArgumentMeta.of("max", ArgumentTypes.INTEGER_ARGUMENT, ArgumentNecessity.OPTIONAL);
 
     @NonNull
@@ -33,7 +33,7 @@ public class CreateLobbyCommandMeta extends BotCommandMetaAdapter {
     private final PlayerMapper playerMapper;
 
     @Autowired
-    public CreateLobbyCommandMeta(@NonNull CodeGame codeGame,  @NonNull PlayerMapper playerMapper) {
+    public CreateLobbyCommandMeta(@NonNull CodeGame codeGame, @NonNull PlayerMapper playerMapper) {
         super("create", List.of(LOBBY_NAME, MAX));
         this.codeGame = codeGame;
         this.playerMapper = playerMapper;
@@ -46,7 +46,7 @@ public class CreateLobbyCommandMeta extends BotCommandMetaAdapter {
         // TODO exception handling
         String lobbyName = getRequiredArg(arguments, LOBBY_NAME);
         this.codeGame.createLobby(new LobbyCreateRequest(lobbyName, getArg(arguments, MAX).orElse(0)));
-        this.codeGame.joinLobby(lobbyName, this.playerMapper.mapToPlayer(context.member()));
+//        this.codeGame.joinLobby(lobbyName, this.playerMapper.mapToPlayer(context.member()));
 
     }
 }
