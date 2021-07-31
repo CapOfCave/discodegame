@@ -28,7 +28,7 @@ public class SessionManager {
 
     public void createLobby(LobbyCreateRequest lobbyCreateRequest) {
         if (this.activeLobbies.containsKey(lobbyCreateRequest.id())) {
-            throw new IllegalStateException(String.format("Lobby with id %s already exists! Cannot create lobby", lobbyCreateRequest.id()));
+            throw new IllegalStateException(String.format("Lobby with id '%s' already exists! Cannot create lobby", lobbyCreateRequest.id()));
         }
         Lobby lobby = new Lobby(lobbyCreateRequest.id(), lobbyCreateRequest.maxPlayers());
         this.activeLobbies.put(lobbyCreateRequest.id(), lobby);
@@ -38,13 +38,13 @@ public class SessionManager {
 
     public void joinLobby(String lobbyId, Player player) {
         if (!this.activeLobbies.containsKey(lobbyId)) {
-            throw new IllegalArgumentException(String.format("Unknown lobby: %s. Cannot join lobby", lobbyId));
+            throw new IllegalArgumentException(String.format("Unknown lobby: '%s'. Cannot join lobby", lobbyId));
         }
 
         Lobby lobby = this.activeLobbies.get(lobbyId);
         if (lobby.isFull()) {
             throw new IllegalStateException(
-                    String.format("Lobby with id %s has already reached %d/%d players! Cannot join lobby.",
+                    String.format("Lobby with id '%s' has already reached %d/%d players! Cannot join lobby.",
                             lobby.getId(), lobby.getPlayerCount(), lobby.getMaxPlayers()));
         }
         if (lobby.containsPlayer(player)) {
