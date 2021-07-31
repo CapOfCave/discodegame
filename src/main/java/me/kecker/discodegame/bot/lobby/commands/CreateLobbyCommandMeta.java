@@ -9,6 +9,7 @@ import me.kecker.discodegame.bot.domain.commands.CommandExecutionContext;
 import me.kecker.discodegame.bot.domain.commands.arguments.ArgumentNecessity;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgument;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgumentMeta;
+import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArguments;
 import me.kecker.discodegame.bot.domain.commands.arguments.types.ArgumentTypes;
 import me.kecker.discodegame.bot.mapping.PlayerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +41,12 @@ public class CreateLobbyCommandMeta extends BotCommandMetaAdapter {
     }
 
     @Override
-    public void accept(CommandExecutionContext context, Map<String, BotCommandArgument<?>> arguments) {
+    public void accept(CommandExecutionContext context, BotCommandArguments arguments) {
 
         // TODO consider max players
         // TODO exception handling
-        String lobbyName = getRequiredArg(arguments, LOBBY_NAME);
-        this.codeGame.createLobby(new LobbyCreateRequest(lobbyName, getArg(arguments, MAX).orElse(0)));
+        String lobbyName = arguments.getRequired(LOBBY_NAME);
+        this.codeGame.createLobby(new LobbyCreateRequest(lobbyName, arguments.get(MAX).orElse(0)));
 //        this.codeGame.joinLobby(lobbyName, this.playerMapper.mapToPlayer(context.member()));
 
     }

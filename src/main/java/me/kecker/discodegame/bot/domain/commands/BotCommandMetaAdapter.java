@@ -61,17 +61,4 @@ public abstract class BotCommandMetaAdapter implements BotCommandMeta {
         return this.argumentMetas.size();
     }
 
-    @SuppressWarnings("unchecked") // types are checked because of the way arguments was filled
-    protected <T> Optional<T> getArg(Map<String, BotCommandArgument<?>> arguments, BotCommandArgumentMeta<T> argumentMeta) {
-        return Optional.ofNullable((BotCommandArgument<T>) arguments.get(argumentMeta.name())).map(BotCommandArgument::value);
-    }
-
-    //TODO make required args required
-    @SuppressWarnings("unchecked") // types are checked because of the way arguments was filled
-    protected <T> T getRequiredArg(Map<String, BotCommandArgument<?>> arguments, BotCommandArgumentMeta<T> argumentMeta) {
-        if (argumentMeta.necessity() != ArgumentNecessity.REQUIRED){
-            throw new IllegalArgumentException("getRequiredArg can only be called with an argumentMeta whose necessity is REQUIRED.");
-        }
-        return (T) arguments.get(argumentMeta.name()).value();
-    }
 }

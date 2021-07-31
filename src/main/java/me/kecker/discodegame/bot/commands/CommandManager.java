@@ -7,15 +7,20 @@ import me.kecker.discodegame.bot.domain.commands.BotCommandMeta;
 import me.kecker.discodegame.bot.domain.commands.CommandExecutionRequest;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgument;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgumentMeta;
+import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArguments;
 import me.kecker.discodegame.bot.domain.commands.arguments.types.ArgumentType;
-import me.kecker.discodegame.bot.domain.exceptions.*;
+import me.kecker.discodegame.bot.domain.exceptions.CommandExecutionException;
+import me.kecker.discodegame.bot.domain.exceptions.CommandInterpreterException;
+import me.kecker.discodegame.bot.domain.exceptions.IllegalCommandArgumentException;
 import me.kecker.discodegame.utils.DcgMapUtils;
-import net.dv8tion.jda.api.entities.Message;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -54,15 +59,15 @@ public class CommandManager {
         if (commandMeta == null) {
             throw new CommandInterpreterException.UnknownCommandException(parseResult.command());
         }
-        Map<String, BotCommandArgument<?>> botCommandArgumentsByName = interpretParseResult(commandMeta, parseResult.orderedArguments(), parseResult.namedArguments());
-        return new CommandExecutionRequest(commandMeta, botCommandArgumentsByName);
+        BotCommandArguments botCommandArguments = interpretParseResult(commandMeta, parseResult.orderedArguments(), parseResult.namedArguments());
+        return new CommandExecutionRequest(commandMeta, botCommandArguments);
     }
 
-    private Map<String, BotCommandArgument<?>> interpretParseResult(BotCommandMeta commandMeta, List<String> orderedArguments, Map<String, String> namedArguments) throws IllegalCommandArgumentException {
+    private BotCommandArguments interpretParseResult(BotCommandMeta commandMeta, List<String> orderedArguments, Map<String, String> namedArguments) throws IllegalCommandArgumentException {
         Map<String, BotCommandArgument<?>> argumentsFromOrder = getBotCommandArgumentsFromOrder(commandMeta, orderedArguments);
         Map<String, BotCommandArgument<?>> argumentsFromName = getBotCommandArgumentsFromName(commandMeta, namedArguments);
         try {
-            return DcgMapUtils.union(argumentsFromOrder, argumentsFromName);
+            return new BotCommandArguments(DcgMapUtils.union(argumentsFromOrder, argumentsFromName));
         } catch (DcgMapUtils.DuplicateKeyException e) {
             throw new IllegalCommandArgumentException.DuplicateArgumentException(
                     e.getDuplicateKeys().stream().map(Object::toString).collect(Collectors.toSet()));
@@ -84,7 +89,7 @@ public class CommandManager {
 
     private Map<String, BotCommandArgument<?>> getBotCommandArgumentsFromName(BotCommandMeta commandMeta, Map<String, String> namedArguments) throws IllegalCommandArgumentException.IllegalTypeException {
         Map<String, BotCommandArgument<?>> result = new HashMap<>();
-        for (var entry: namedArguments.entrySet()){
+        for (var entry : namedArguments.entrySet()) {
             BotCommandArgumentMeta<?> argumentMeta = commandMeta.getArgumentMeta(entry.getKey());
             // note that argumentMeta.getName may not be equal to entry.getKey() in case of aliases
             result.put(argumentMeta.name(), mapToBotCommandArgument(argumentMeta, entry.getValue()));
@@ -95,7 +100,7 @@ public class CommandManager {
 
     private <T> BotCommandArgument<T> mapToBotCommandArgument(BotCommandArgumentMeta<T> argumentMeta, String stringValue) throws IllegalCommandArgumentException.IllegalTypeException {
         ArgumentType<T> type = argumentMeta.type();
-        if (!type.matches(stringValue)){
+        if (!type.matches(stringValue)) {
             throw new IllegalCommandArgumentException.IllegalTypeException(type, stringValue);
         }
         return new BotCommandArgument<>(argumentMeta, type.getValue(stringValue));

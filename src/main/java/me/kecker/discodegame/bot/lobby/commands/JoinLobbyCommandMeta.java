@@ -6,15 +6,14 @@ import me.kecker.discodegame.bot.domain.annotations.RegisteredGuildCommand;
 import me.kecker.discodegame.bot.domain.commands.BotCommandMetaAdapter;
 import me.kecker.discodegame.bot.domain.commands.CommandExecutionContext;
 import me.kecker.discodegame.bot.domain.commands.arguments.ArgumentNecessity;
-import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgument;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgumentMeta;
+import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArguments;
 import me.kecker.discodegame.bot.domain.commands.arguments.types.ArgumentTypes;
 import me.kecker.discodegame.bot.mapping.PlayerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 
 @RegisteredGuildCommand
 @Component
@@ -37,7 +36,7 @@ public class JoinLobbyCommandMeta extends BotCommandMetaAdapter {
     }
 
     @Override
-    public void accept(CommandExecutionContext context, Map<String, BotCommandArgument<?>> argumentsByName) {
-        this.codeGame.joinLobby(getRequiredArg(argumentsByName, LOBBY_ID), this.playerMapper.mapToPlayer(context.member()));
+    public void accept(CommandExecutionContext context, BotCommandArguments arguments) {
+        this.codeGame.joinLobby(arguments.getRequired(LOBBY_ID), this.playerMapper.mapToPlayer(context.member()));
     }
 }

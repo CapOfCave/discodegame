@@ -4,6 +4,7 @@ import me.kecker.discodegame.bot.domain.commands.BotCommandMeta;
 import me.kecker.discodegame.bot.domain.commands.CommandExecutionContext;
 import me.kecker.discodegame.bot.domain.commands.CommandExecutionRequest;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgument;
+import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArguments;
 import me.kecker.discodegame.bot.domain.exceptions.CommandExecutionException;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -47,7 +48,9 @@ class CommandEventListenerTest {
     private BotCommandMeta commandMeta;
 
     @Mock
-    private Map<String, BotCommandArgument<?>> arguments;
+    private Map<String, BotCommandArgument<?>> argumentMap;
+
+    private BotCommandArguments arguments;
 
     private CommandExecutionRequest commandExecutionRequest;
 
@@ -56,6 +59,7 @@ class CommandEventListenerTest {
     @BeforeEach
     void setUp() {
         when(this.guildMessageReceivedEventMock.getMessage()).thenReturn(messageMock);
+        this.arguments = new BotCommandArguments(this.argumentMap);
         this.objectUnderTest = new CommandEventListener(this.commandManagerMock, this.commandExecutorServiceMock);
         this.commandExecutionRequest = new CommandExecutionRequest(this.commandMeta, this.arguments);
     }

@@ -4,7 +4,10 @@ import me.kecker.discodegame.application.api.CodeGame;
 import me.kecker.discodegame.application.api.LobbyCreateRequest;
 import me.kecker.discodegame.bot.domain.commands.CommandExecutionContext;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgument;
+import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArguments;
 import me.kecker.discodegame.bot.mapping.PlayerMapper;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +32,12 @@ class CreateLobbyCommandMetaTest {
     @Mock
     private PlayerMapper playerMapperMock;
 
+    @Mock
+    private Guild guild;
+
+    @Mock
+    private Member member;
+
     private CommandExecutionContext context;
 
     public static final String LOBBY_NAME_ARGUMENT_VALUE = "lobbyNameValue";
@@ -36,11 +45,12 @@ class CreateLobbyCommandMetaTest {
     public static final int MAX_ARGUMENT_VALUE = 4;
     private static final BotCommandArgument<Integer> MAX_ARGUMENT = new BotCommandArgument<>(MAX, MAX_ARGUMENT_VALUE);
 
-    private static final Map<String, BotCommandArgument<?>> lobbyArguments = Map.of(LOBBY_NAME.name(), LOBBY_NAME_ARGUMENT);
-    private static final Map<String, BotCommandArgument<?>> allArguments = Map.of(LOBBY_NAME.name(), LOBBY_NAME_ARGUMENT, MAX.name(), MAX_ARGUMENT);
+    private static final BotCommandArguments lobbyArguments = new BotCommandArguments(Map.of(LOBBY_NAME.name(), LOBBY_NAME_ARGUMENT));
+    private static final BotCommandArguments allArguments = new BotCommandArguments(Map.of(LOBBY_NAME.name(), LOBBY_NAME_ARGUMENT, MAX.name(), MAX_ARGUMENT));
 
     @BeforeEach
     public void setUp() {
+        this.context = new CommandExecutionContext(this.guild, this.member);
         this.objectUnderTest = new CreateLobbyCommandMeta(this.codeGameMock, this.playerMapperMock);
     }
 
