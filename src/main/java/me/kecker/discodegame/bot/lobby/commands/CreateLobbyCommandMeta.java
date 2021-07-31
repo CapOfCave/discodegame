@@ -2,6 +2,7 @@ package me.kecker.discodegame.bot.lobby.commands;
 
 import me.kecker.discodegame.bot.domain.annotations.RegisteredGuildCommand;
 import me.kecker.discodegame.bot.domain.commands.BotCommandMetaAdapter;
+import me.kecker.discodegame.bot.domain.commands.CommandExecutionContext;
 import me.kecker.discodegame.bot.domain.commands.arguments.ArgumentNecessity;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgument;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgumentMeta;
@@ -24,7 +25,7 @@ public class CreateLobbyCommandMeta extends BotCommandMetaAdapter {
     }
 
     @Override
-    public void accept(Map<String, BotCommandArgument<?>> arguments) {
+    public void accept(CommandExecutionContext context, Map<String, BotCommandArgument<?>> arguments) {
         System.out.printf("Created Lobby %s. Max players: %d.%n",
                 getArg(arguments, LOBBY_NAME).orElse("without name"),
                 getArg(arguments, MAX).orElse(12));

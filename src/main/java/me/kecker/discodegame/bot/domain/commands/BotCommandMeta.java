@@ -15,8 +15,7 @@ public interface BotCommandMeta {
     @NonNull
     Collection<String> getAliases();
 
-    //TODO add caller id
-    void accept(Map<String, BotCommandArgument<?>> argumentsByName);
+    void accept(CommandExecutionContext context, Map<String, BotCommandArgument<?>> argumentsByName);
 
     @NonNull
     BotCommandArgumentMeta<?> getArgumentMeta(@NonNull String name);

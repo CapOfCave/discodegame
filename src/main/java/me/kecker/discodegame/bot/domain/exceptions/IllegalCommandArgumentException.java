@@ -6,7 +6,7 @@ import me.kecker.discodegame.utils.DcgStringUtils;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public class IllegalCommandArgumentException extends Exception {
+public class IllegalCommandArgumentException extends CommandExecutionException {
 
     public IllegalCommandArgumentException() {
     }

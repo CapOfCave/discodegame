@@ -5,6 +5,7 @@ import me.kecker.discodegame.bot.domain.commands.arguments.RawArgument;
 import me.kecker.discodegame.bot.domain.exceptions.ArgumentSyntaxException;
 import net.dv8tion.jda.api.entities.Message;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -50,16 +51,14 @@ public class CommandLexer {
         return messageContent.regionMatches(this.ignorePrefixCase, 0, this.prefix, 0, this.prefix.length());
     }
 
-    @Deprecated
     public String getCommandName(@NonNull String messageContent) {
-        String contentWithoutPrefix = removePrefix(messageContent);
-        String[] commandNameAndArguments = contentWithoutPrefix.split("\\s+", 2);
+        String[] commandNameAndArguments = splitCommandNameAndArguments(messageContent);
         return commandNameAndArguments[0];
     }
 
+    @NonNull
     public Result tokenizeMessage(@NonNull String messageContent) throws ArgumentSyntaxException {
-        String contentWithoutPrefix = removePrefix(messageContent);
-        String[] commandNameAndArguments = contentWithoutPrefix.split("\\s+", 2);
+        String[] commandNameAndArguments = splitCommandNameAndArguments(messageContent);
         String commandName = commandNameAndArguments[0];
         if (commandNameAndArguments.length == 1) {
             return new Result(commandName, Collections.emptyList());
@@ -67,6 +66,12 @@ public class CommandLexer {
 
         List<RawArgument> arguments = this.argumentLexer.tokenize(commandNameAndArguments[1]);
         return new Result(commandName, arguments);
+    }
+
+    @NotNull
+    private String[] splitCommandNameAndArguments(@NonNull String messageContent) {
+        String contentWithoutPrefix = removePrefix(messageContent);
+        return contentWithoutPrefix.split("\\s+", 2);
     }
 
     @NonNull

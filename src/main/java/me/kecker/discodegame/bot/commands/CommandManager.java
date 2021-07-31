@@ -4,13 +4,14 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import me.kecker.discodegame.bot.domain.annotations.RegisteredGuildCommand;
 import me.kecker.discodegame.bot.domain.commands.BotCommandMeta;
+import me.kecker.discodegame.bot.domain.commands.CommandExecutionRequest;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgument;
 import me.kecker.discodegame.bot.domain.commands.arguments.BotCommandArgumentMeta;
 import me.kecker.discodegame.bot.domain.commands.arguments.types.ArgumentType;
-import me.kecker.discodegame.bot.domain.exceptions.ArgumentParseException;
-import me.kecker.discodegame.bot.domain.exceptions.ArgumentSyntaxException;
-import me.kecker.discodegame.bot.domain.exceptions.IllegalCommandArgumentException;
+import me.kecker.discodegame.bot.domain.exceptions.*;
 import me.kecker.discodegame.utils.DcgMapUtils;
+import net.dv8tion.jda.api.entities.Message;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,12 +46,16 @@ public class CommandManager {
         log.info("{} found {} commands, {} of which are guild commands.", CommandManager.class.getSimpleName(), allCommands.size(), this.guildCommands.size());
     }
 
-    public void handleCommand(String commandRaw) throws ArgumentSyntaxException, ArgumentParseException, IllegalCommandArgumentException {
+    @NotNull
+    public CommandExecutionRequest interpretCommand(String commandRaw) throws CommandExecutionException {
         CommandLexer.Result lexResult = this.commandLexer.tokenizeMessage(commandRaw);
         CommandParser.Result parseResult = this.commandParser.parse(lexResult);
         BotCommandMeta commandMeta = this.guildCommands.get(parseResult.command());
+        if (commandMeta == null) {
+            throw new CommandInterpreterException.UnknownCommandException(parseResult.command());
+        }
         Map<String, BotCommandArgument<?>> botCommandArgumentsByName = interpretParseResult(commandMeta, parseResult.orderedArguments(), parseResult.namedArguments());
-        commandMeta.accept(botCommandArgumentsByName);
+        return new CommandExecutionRequest(commandMeta, botCommandArgumentsByName);
     }
 
     private Map<String, BotCommandArgument<?>> interpretParseResult(BotCommandMeta commandMeta, List<String> orderedArguments, Map<String, String> namedArguments) throws IllegalCommandArgumentException {
@@ -84,6 +89,7 @@ public class CommandManager {
             // note that argumentMeta.getName may not be equal to entry.getKey() in case of aliases
             result.put(argumentMeta.name(), mapToBotCommandArgument(argumentMeta, entry.getValue()));
         }
+        // TODO validate arguments
         return result;
     }
 
@@ -98,5 +104,9 @@ public class CommandManager {
     private void addToGuildCommands(BotCommandMeta botCommand) {
         this.guildCommands.putIfAbsent(botCommand.getName(), botCommand);
         botCommand.getAliases().forEach(alias -> this.guildCommands.putIfAbsent(alias, botCommand));
+    }
+
+    public boolean isCommand(String messageContent) {
+        return this.commandLexer.isCommand(messageContent);
     }
 }

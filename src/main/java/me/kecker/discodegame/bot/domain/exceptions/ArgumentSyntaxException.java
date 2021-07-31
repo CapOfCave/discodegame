@@ -1,6 +1,6 @@
 package me.kecker.discodegame.bot.domain.exceptions;
 
-public class ArgumentSyntaxException extends Exception {
+public class ArgumentSyntaxException extends CommandExecutionException {
 
     public ArgumentSyntaxException() {
         super();
