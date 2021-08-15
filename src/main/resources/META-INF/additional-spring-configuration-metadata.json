@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "dcg.piston.baseUrl",
+      "type": "java.lang.String",
+      "description": "Base url for the piston client"
+  }
+] }
