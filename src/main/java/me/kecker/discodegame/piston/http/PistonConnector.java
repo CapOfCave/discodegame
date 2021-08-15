@@ -36,17 +36,13 @@ public class PistonConnector {
         this.gson = gson;
     }
 
-    @SneakyThrows
     public PistonRuntimeResponseDTO[] getRuntimes() {
         HttpRequest request = HttpRequest.newBuilder()
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .uri(URI.create(this.baseUrl + "/runtimes"))
                 .build();
-
-        HttpResponse<String> response = this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        return this.gson.fromJson(response.body(), PistonRuntimeResponseDTO[].class);
+        return this.executeRequest(request, PistonRuntimeResponseDTO[].class);
     }
-
 
     public PistonExecutionResponseDTO execute(PistonExecutionRequestDTO request) {
         return execute(this.gson.toJson(request));
@@ -57,13 +53,15 @@ public class PistonConnector {
                 .method("POST", HttpRequest.BodyPublishers.ofString(body))
                 .uri(URI.create(this.baseUrl + "/execute"))
                 .build();
+        return this.executeRequest(request, PistonExecutionResponseDTO.class);
+    }
 
+    private <T> T executeRequest(HttpRequest request, Class<T> responseClass) {
         try {
             HttpResponse<String> response = this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            return this.gson.fromJson(response.body(), PistonExecutionResponseDTO.class);
+            return this.gson.fromJson(response.body(), responseClass);
         } catch (IOException | InterruptedException e) {
             throw new PistonRuntimeException(e);
         }
-
     }
 }
