@@ -1,4 +1,5 @@
 package me.kecker.discodegame.domain;
 
-public class Player {
+public interface Player {
+    String getId();
 }

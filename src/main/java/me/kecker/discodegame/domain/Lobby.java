@@ -1,12 +1,14 @@
 package me.kecker.discodegame.domain;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Lobby {
 
@@ -14,13 +16,11 @@ public class Lobby {
     private final String id;
 
     @NonNull
-    private final Collection<Player> players;
+    private final Map<String, Player> playersById;
 
     private int maxPlayers;
 
-    public Lobby(@NonNull String id) {
-        this(id, 0, Collections.emptySet());
-    }
+    private Game activeGame = null;
 
     public Lobby(@NonNull String id, int maxPlayers) {
         this(id, maxPlayers, Collections.emptySet());
@@ -29,13 +29,11 @@ public class Lobby {
     public Lobby(@NonNull String id, int maxPlayers, @NonNull Collection<? extends Player> players) {
         this.id = id;
         this.maxPlayers = maxPlayers;
-        this.players = new HashSet<>(players);
+        this.playersById = players.stream().collect(Collectors.toMap(Player::getId, Function.identity()));
     }
 
-
-
     public void addPlayer(Player player) {
-        this.players.add(player);
+        this.playersById.put(player.getId(), player);
     }
 
     public boolean isFull() {
@@ -43,18 +41,38 @@ public class Lobby {
     }
 
     public int getPlayerCount() {
-        return this.players.size();
+        return this.playersById.size();
     }
 
     public int getMaxPlayers() {
         return this.maxPlayers;
     }
 
+    @NotNull
     public String getId() {
         return id;
     }
 
     public boolean containsPlayer(Player player) {
-        return this.players.contains(player);
+        return this.containsPlayer(player.getId());
+    }
+
+    public boolean containsPlayer(String playerId) {
+        return this.playersById.containsKey(playerId);
+    }
+
+    public void startGame(Game game) {
+        this.activeGame = game;
+    }
+
+    public void stopGame() {
+        if (this.activeGame == null) {
+            throw new IllegalStateException("No game running");
+        }
+        this.activeGame = null;
+    }
+
+    public Optional<Game> getActiveGame() {
+        return Optional.ofNullable(this.activeGame);
     }
 }
