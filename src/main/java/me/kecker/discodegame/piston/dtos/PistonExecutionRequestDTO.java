@@ -17,8 +17,11 @@ public record PistonExecutionRequestDTO(
         int runMemoryLimit
 ) {
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(
+            @NonNull String language,
+            @NonNull String version
+    ) {
+        return new Builder(language, version);
     }
 
     public static class Builder {
@@ -32,7 +35,9 @@ public record PistonExecutionRequestDTO(
         private int compileMemoryLimit;
         private int runMemoryLimit;
 
-        Builder() {
+        Builder(@NonNull String language, @NonNull String version) {
+            this.language = language;
+            this.version = version;
         }
 
         public PistonExecutionRequestDTO build() {

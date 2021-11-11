@@ -3,11 +3,11 @@ package me.kecker.discodegame.piston.services;
 import lombok.NonNull;
 import me.kecker.discodegame.piston.dtos.PistonRuntimeResponseDTO;
 import me.kecker.discodegame.piston.http.PistonConnector;
-import me.kecker.discodegame.utils.DcgStreamUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Optional;
 
 @Component
 public class PistonRuntimeManager {
@@ -21,13 +21,12 @@ public class PistonRuntimeManager {
         this.pistonConnector = pistonConnector;
     }
 
-    @Nullable
-    public PistonRuntimeResponseDTO getRuntime(@NonNull String language) {
+    public Optional<PistonRuntimeResponseDTO> getRuntime(@NonNull String language) {
         PistonRuntimeResponseDTO[] runtimes = this.getOrFetchRuntimes();
         // TODO handle multiple versions!
         return Arrays.stream(runtimes)
                 .filter(runtime -> runtime.matchesLanguage(language))
-                .collect(DcgStreamUtils.toSingleton());
+                .findFirst();
     }
 
     private PistonRuntimeResponseDTO[] getOrFetchRuntimes() {
