@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -52,5 +53,13 @@ public class SessionManager {
                     String.format("Player %s is already a member of lobby with id %s. Cannot join lobby.", player, lobby.getId()));
         }
         lobby.addPlayer(player);
+    }
+
+    public Optional<Lobby> getLobbyForPlayer(String playerId) {
+        return this.activeLobbies.values().stream().filter(lobby -> lobby.containsPlayer(playerId)).findAny();
+    }
+
+    public Lobby getLobbyById(String lobbyId) {
+        return this.activeLobbies.get(lobbyId);
     }
 }

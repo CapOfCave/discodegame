@@ -8,6 +8,12 @@ import org.springframework.stereotype.Component;
 public class PlayerMapper {
 
     public Player mapToPlayer(Member member) {
-        return new Player();
+        return new Player() {
+
+            @Override
+            public String getId() {
+                return member.getId();
+            }
+        };
     }
 }

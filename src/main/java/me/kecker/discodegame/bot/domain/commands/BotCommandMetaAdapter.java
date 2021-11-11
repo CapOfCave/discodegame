@@ -48,6 +48,9 @@ public abstract class BotCommandMetaAdapter implements BotCommandMeta {
 
     @Override
     public @NonNull BotCommandArgumentMeta<?> getArgumentMeta(@NonNull String name) {
+        if (!this.argumentMetasByName.containsKey(name)) {
+            throw new IllegalStateException("Unknown argument Meta: " + name + ", known argumentMetas are " + this.argumentMetasByName.keySet());
+        }
         return this.argumentMetasByName.get(name);
     }
 
