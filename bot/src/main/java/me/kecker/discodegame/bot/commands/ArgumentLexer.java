@@ -96,7 +96,7 @@ public class ArgumentLexer {
     }
 
     private boolean isQuote(char test) {
-        return test == '"';
+        return test == '`';
     }
 
     private boolean isSeparator(char test) {

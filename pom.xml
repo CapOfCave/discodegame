@@ -23,7 +23,7 @@
 
     <modules>
         <module>core</module>
-        <module>bot</module>
+        <module>slashbot</module>
         <module>piston</module>
     </modules>
 
